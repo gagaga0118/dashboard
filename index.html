@@ -24,6 +24,7 @@
             --dark: #1a1f29;
             --card-bg: rgba(255, 255, 255, 0.08);
             --card-border: rgba(255, 255, 255, 0.12);
+            --success: #2ecc71;
         }
         
         body {
@@ -58,7 +59,6 @@
             font-size: 3rem;
             margin-bottom: 15px;
             background: linear-gradient(to right, #4ecdc4, #43cea2);
-            /* 添加 -webkit- 前缀解决兼容性问题 */
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -138,10 +138,13 @@
             text-align: center;
             font-family: 'Courier New', monospace;
             background: linear-gradient(to bottom, #fff, #c3e6ff);
-            /* 添加 -webkit- 前缀解决兼容性问题 */
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
+            min-height: 64px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         
         .card-value span {
@@ -290,7 +293,7 @@
             height: 100%;
             background: linear-gradient(90deg, #3498db, #1abc9c);
             border-radius: 6px;
-            width: 78.3%; /* Dynamic in real app */
+            width: 78.3%;
             position: relative;
             overflow: hidden;
         }
@@ -357,6 +360,67 @@
             font-weight: 600;
         }
         
+        .loading-dots {
+            display: inline-block;
+            position: relative;
+            width: 80px;
+            height: 20px;
+        }
+        
+        .loading-dots div {
+            position: absolute;
+            top: 9px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--accent);
+            animation-timing-function: cubic-bezier(0, 1, 1, 0);
+        }
+        
+        .loading-dots div:nth-child(1) {
+            left: 8px;
+            animation: loading-dots1 0.6s infinite;
+        }
+        
+        .loading-dots div:nth-child(2) {
+            left: 8px;
+            animation: loading-dots2 0.6s infinite;
+        }
+        
+        .loading-dots div:nth-child(3) {
+            left: 32px;
+            animation: loading-dots2 0.6s infinite;
+        }
+        
+        .loading-dots div:nth-child(4) {
+            left: 56px;
+            animation: loading-dots3 0.6s infinite;
+        }
+        
+        .api-status {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .api-status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #e74c3c;
+        }
+        
+        .api-status-dot.active {
+            background: var(--success);
+        }
+        
         @keyframes fadeIn {
             from { opacity: 0; }
             to { opacity: 1; }
@@ -376,6 +440,21 @@
         @keyframes shine {
             0% { transform: translateX(-100%); }
             100% { transform: translateX(100%); }
+        }
+        
+        @keyframes loading-dots1 {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes loading-dots3 {
+            0% { transform: scale(1); }
+            100% { transform: scale(0); }
+        }
+        
+        @keyframes loading-dots2 {
+            0% { transform: translate(0, 0); }
+            100% { transform: translate(24px, 0); }
         }
         
         @media (max-width: 768px) {
@@ -400,6 +479,17 @@
                 align-items: flex-start;
                 gap: 15px;
             }
+            
+            .deployment-info {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .api-status {
+                position: static;
+                margin: 15px auto;
+                max-width: 200px;
+            }
         }
     </style>
 </head>
@@ -409,15 +499,27 @@
         <p class="subtitle">实时分析气象条件对能源系统运行效率的影响，结合热力学模型进行系统效率优化分析</p>
     </div>
     
+    <div class="api-status" id="apiStatus">
+        <div class="api-status-dot" id="apiStatusDot"></div>
+        <span id="apiStatusText">bbdc2896c42a1bb787b3fec94bf8865a连接中...</span>
+    </div>
+    
     <div class="dashboard">
         <div class="card">
             <div class="card-header">
                 <i class="fas fa-thermometer-half"></i>
                 <div class="card-title">环境温度</div>
             </div>
-            <div class="card-value">26.4<span>°C</span></div>
+            <div class="card-value" id="tempValue">
+                <div class="loading-dots">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </div>
             <div class="card-footer">
-                <div>较昨日: <span class="optimization">+2.1°C</span></div>
+                <div>较昨日: <span class="optimization" id="tempChange">+2.1°C</span></div>
                 <div>理想范围: 18-24°C</div>
             </div>
         </div>
@@ -427,9 +529,16 @@
                 <i class="fas fa-tint"></i>
                 <div class="card-title">相对湿度</div>
             </div>
-            <div class="card-value">65<span>%</span></div>
+            <div class="card-value" id="humidityValue">
+                <div class="loading-dots">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </div>
             <div class="card-footer">
-                <div>较昨日: <span class="optimization">-8%</span></div>
+                <div>较昨日: <span class="optimization" id="humidityChange">-8%</span></div>
                 <div>理想范围: 40-70%</div>
             </div>
         </div>
@@ -439,9 +548,16 @@
                 <i class="fas fa-wind"></i>
                 <div class="card-title">风速</div>
             </div>
-            <div class="card-value">3.2<span>m/s</span></div>
+            <div class="card-value" id="windValue">
+                <div class="loading-dots">
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                    <div></div>
+                </div>
+            </div>
             <div class="card-footer">
-                <div>较昨日: <span class="optimization">+1.1m/s</span></div>
+                <div>较昨日: <span class="optimization" id="windChange">+1.1m/s</span></div>
                 <div>理想范围: 2-5m/s</div>
             </div>
         </div>
@@ -451,9 +567,9 @@
                 <i class="fas fa-bolt"></i>
                 <div class="card-title">系统效率</div>
             </div>
-            <div class="card-value">78.3<span>%</span></div>
+            <div class="card-value" id="efficiencyValue">78.3<span>%</span></div>
             <div class="efficiency-bar">
-                <div class="efficiency-fill" style="width: 78.3%"></div>
+                <div class="efficiency-fill" id="efficiencyBar" style="width: 78.3%"></div>
             </div>
             <div class="card-footer">
                 <div>理论最高: 92.5%</div>
@@ -527,6 +643,82 @@
     </div>
 
     <script>
+        // 真实气象API密钥
+        const apiKey = 'bbdc2896c42a1bb787b3fec94bf8865a';
+        
+        // 获取气象数据
+        async function fetchWeatherData() {
+            try {
+                // 更新API状态
+                updateApiStatus('连接中...', false);
+                
+                const response = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=Beijing,cn&appid=${apiKey}&units=metric`);
+                
+                if (!response.ok) {
+                    throw new Error('无法获取气象数据');
+                }
+                
+                const data = await response.json();
+                updateApiStatus('连接成功', true);
+                
+                return {
+                    temp: data.main.temp,
+                    humidity: data.main.humidity,
+                    wind: data.wind.speed,
+                    description: data.weather[0].description,
+                    icon: data.weather[0].icon
+                };
+            } catch (error) {
+                console.error('获取气象数据失败:', error);
+                updateApiStatus('连接失败', false);
+                
+                // 返回模拟数据作为后备
+                return {
+                    temp: 26.4,
+                    humidity: 65,
+                    wind: 3.2,
+                    description: "多云",
+                    icon: "04d"
+                };
+            }
+        }
+        
+        // 更新API状态显示
+        function updateApiStatus(message, isActive) {
+            const statusText = document.getElementById('apiStatusText');
+            const statusDot = document.getElementById('apiStatusDot');
+            
+            statusText.textContent = `气象API: ${message}`;
+            statusDot.className = isActive ? 'api-status-dot active' : 'api-status-dot';
+        }
+        
+        // 更新气象卡片
+        function updateWeatherCards(weatherData) {
+            // 温度
+            document.getElementById('tempValue').innerHTML = 
+                `${weatherData.temp.toFixed(1)}<span>°C</span>`;
+            
+            // 湿度
+            document.getElementById('humidityValue').innerHTML = 
+                `${weatherData.humidity}<span>%</span>`;
+            
+            // 风速
+            document.getElementById('windValue').innerHTML = 
+                `${weatherData.wind.toFixed(1)}<span>m/s</span>`;
+            
+            // 更新气象影响分析
+            const weatherAnalysis = document.querySelector('.info-card:nth-child(2) .info-content');
+            if (weatherAnalysis) {
+                weatherAnalysis.innerHTML = `
+                    <p><i class="fas fa-temperature-high"></i> 当前温度: ${weatherData.temp.toFixed(1)}°C (${weatherData.description})</p>
+                    <p><i class="fas fa-smog"></i> 相对湿度: ${weatherData.humidity}%</p>
+                    <p><i class="fas fa-wind"></i> 风速: ${weatherData.wind.toFixed(1)} m/s</p>
+                    <p><i class="fas fa-chart-line"></i> 当前气象条件对系统效率影响: -${(weatherData.temp > 24 ? 8.2 : 2.5).toFixed(1)}%</p>
+                    <p><i class="fas fa-lightbulb"></i> 建议: ${weatherData.temp > 24 ? '增加冷却塔风扇转速' : '保持当前运行参数'}</p>
+                `;
+            }
+        }
+        
         // 模拟气象和能源数据
         function generateData() {
             const now = new Date();
@@ -722,90 +914,4 @@
                                 color: 'rgba(255, 255, 255, 0.7)'
                             },
                             grid: {
-                                drawOnChartArea: false
-                            },
-                            ticks: {
-                                color: 'rgba(255, 255, 255, 0.6)'
-                            },
-                            min: 18,
-                            max: 32
-                        },
-                        y2: {
-                            type: 'linear',
-                            display: false,
-                            position: 'right',
-                            min: 40,
-                            max: 80
-                        }
-                    }
-                }
-            });
-        }
-        
-        // 更新时间显示
-        function updateTime() {
-            const now = new Date();
-            const formattedTime = now.toLocaleString('zh-CN', {
-                year: 'numeric',
-                month: 'long',
-                day: 'numeric',
-                hour: '2-digit',
-                minute: '2-digit',
-                second: '2-digit'
-            });
-            document.getElementById('update-time').textContent = formattedTime;
-        }
-        
-        // 处理时间范围按钮点击
-        function setupTimeButtons() {
-            const buttons = document.querySelectorAll('.time-btn');
-            buttons.forEach(btn => {
-                btn.addEventListener('click', function() {
-                    buttons.forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                    
-                    // 在实际应用中，这里会重新获取对应时间范围的数据
-                    // 现在只是模拟
-                    const newData = generateData();
-                    updateCardData(newData);
-                    window.efficiencyChart.data.labels = newData.labels;
-                    window.efficiencyChart.data.datasets[0].data = newData.tempData;
-                    window.efficiencyChart.data.datasets[1].data = newData.humidityData;
-                    window.efficiencyChart.data.datasets[2].data = newData.idealLoad;
-                    window.efficiencyChart.data.datasets[3].data = newData.actualLoad;
-                    window.efficiencyChart.update();
-                    updateTime();
-                });
-            });
-        }
-        
-        // 初始化
-        function initDashboard() {
-            const data = generateData();
-            updateCardData(data);
-            renderChart(data);
-            updateTime();
-            setupTimeButtons();
-            
-            // 每30秒更新数据
-            setInterval(() => {
-                const newData = generateData();
-                updateCardData(newData);
-                
-                // 更新图表数据
-                window.efficiencyChart.data.labels = newData.labels;
-                window.efficiencyChart.data.datasets[0].data = newData.tempData;
-                window.efficiencyChart.data.datasets[1].data = newData.humidityData;
-                window.efficiencyChart.data.datasets[2].data = newData.idealLoad;
-                window.efficiencyChart.data.datasets[3].data = newData.actualLoad;
-                window.efficiencyChart.update();
-                
-                updateTime();
-            }, 30000);
-        }
-        
-        // 页面加载完成后初始化
-        document.addEventListener('DOMContentLoaded', initDashboard);
-    </script>
-</body>
-</html>
+                                drawOn
