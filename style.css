@@ -1,47 +1,77 @@
-/* ======= 核心指标卡片 ======= */
-.metric-card {
-    @apply bg-white p-6 rounded-xl shadow-md text-center border border-gray-200 relative;
-    transition: all 0.4s ease;
-}
-.metric-card:hover {
-    @apply shadow-lg transform -translate-y-1;
-}
-.metric-card h3 {
-    @apply text-gray-600 text-base font-medium mb-1;
-}
-.metric-card p {
-    @apply text-3xl font-bold text-gray-800 mt-2;
-}
-.badge {
-    @apply absolute -top-3 left-1/2 transform -translate-x-1/2 bg-blue-100 text-blue-800 text-xs rounded-full px-3 py-1;
+/* 核心增强样式 */
+body {
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    background: linear-gradient(to bottom, #f0fdf4, #f0f9ff);
 }
 
-/* ======= 图表容器优化 ======= */
-.analysis-card {
-    @apply bg-white rounded-xl shadow-xl p-5;
-    transition: box-shadow 0.3s, transform 0.3s;
-}
-.analysis-card:hover {
-    @apply shadow-2xl;
+.validation-card {
+    border: 1px solid #e5e7eb;
+    background: linear-gradient(to right, #f0fdfa, #ecfdf5);
 }
 
-/* ======= 系统状态加载动画 ======= */
-#loading {
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
+.tech-card {
+    @apply p-6 rounded-xl shadow-md relative overflow-hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border: 1px solid #e5e7eb;
 }
 
-/* ======= 自适应布局优化 ======= */
+.tech-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.tech-card h3 {
+    @apply text-base font-medium text-gray-700 mb-1;
+}
+
+.tech-card p {
+    @apply text-2xl font-bold mb-3;
+}
+
+.tech-tag {
+    @apply inline-block px-3 py-1 rounded-full text-xs font-medium;
+    background-color: rgba(16, 185, 129, 0.1);
+    color: #047857;
+}
+
+/* 图表容器样式 */
+.chart-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.chart-container {
+    @apply bg-white p-4 rounded-lg shadow-md overflow-hidden;
+    height: 300px;
+}
+
+.chart-container h3 {
+    @apply text-md font-semibold mb-3 pb-2 border-b border-gray-100;
+}
+
+/* 响应式调整 */
 @media (max-width: 768px) {
-    .grid-cols-4 {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+    .tech-card {
+        @apply p-4;
     }
-    .metric-card p {
-        @apply text-2xl;
+    
+    .chart-grid {
+        grid-template-columns: 1fr;
     }
 }
-@media (max-width: 500px) {
-    .grid-cols-4 {
-        grid-template-columns: repeat(1, minmax(0, 1fr));
-    }
+
+/* 动效增强 */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+#dashboard {
+    animation: fadeIn 0.6s ease forwards;
+}
+
+.model-card {
+    background: #f5fffb;
+    border: 1px solid #ccfbf1;
 }
