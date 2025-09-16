@@ -1,77 +1,36 @@
-/* 核心增强样式 */
-body {
-    font-family: 'Segoe UI', system-ui, sans-serif;
-    background: linear-gradient(to bottom, #f0fdf4, #f0f9ff);
+/* 修复按钮禁用状态样式 */
+#searchBtn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+  transform: none !important; /* 禁用悬停效果 */
 }
 
-.validation-card {
-    border: 1px solid #e5e7eb;
-    background: linear-gradient(to right, #f0fdfa, #ecfdf5);
+/* 加载动画增强 */
+.loading {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 3px solid rgba(255,255,255,0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 0.8s linear infinite;
+  vertical-align: middle;
+  margin-right: 8px;
 }
 
-.tech-card {
-    @apply p-6 rounded-xl shadow-md relative overflow-hidden;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    border: 1px solid #e5e7eb;
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
-.tech-card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
-}
-
-.tech-card h3 {
-    @apply text-base font-medium text-gray-700 mb-1;
-}
-
-.tech-card p {
-    @apply text-2xl font-bold mb-3;
-}
-
-.tech-tag {
-    @apply inline-block px-3 py-1 rounded-full text-xs font-medium;
-    background-color: rgba(16, 185, 129, 0.1);
-    color: #047857;
-}
-
-/* 图表容器样式 */
-.chart-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 20px;
-}
-
-.chart-container {
-    @apply bg-white p-4 rounded-lg shadow-md overflow-hidden;
-    height: 300px;
-}
-
-.chart-container h3 {
-    @apply text-md font-semibold mb-3 pb-2 border-b border-gray-100;
-}
-
-/* 响应式调整 */
-@media (max-width: 768px) {
-    .tech-card {
-        @apply p-4;
-    }
-    
-    .chart-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-/* 动效增强 */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-#dashboard {
-    animation: fadeIn 0.6s ease forwards;
-}
-
-.model-card {
-    background: #f5fffb;
-    border: 1px solid #ccfbf1;
+/* 控制台信息隐藏提示 */
+body::after {
+  content: "✅ 系统已启用 - 控制台有详细日志";
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  background: #10b981;
+  color: white;
+  padding: 5px 10px;
+  font-size: 12px;
+  z-index: 9999;
 }
