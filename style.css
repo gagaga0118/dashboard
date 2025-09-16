@@ -1,15 +1,47 @@
-.kpi-card {
-    /* 替换 @apply 为原生属性 */
-    padding: 1.25rem;        /* p-5 */
-    border-radius: 0.75rem;  /* rounded-xl */
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* shadow-sm */
-    border: 1px solid #f3f4f6; /* border border-gray-100 */
-    text-align: center;      /* text-center */
-    transition: transform 0.3s;
+/* ======= 核心指标卡片 ======= */
+.metric-card {
+    @apply bg-white p-6 rounded-xl shadow-md text-center border border-gray-200 relative;
+    transition: all 0.4s ease;
+}
+.metric-card:hover {
+    @apply shadow-lg transform -translate-y-1;
+}
+.metric-card h3 {
+    @apply text-gray-600 text-base font-medium mb-1;
+}
+.metric-card p {
+    @apply text-3xl font-bold text-gray-800 mt-2;
+}
+.badge {
+    @apply absolute -top-3 left-1/2 transform -translate-x-1/2 bg-blue-100 text-blue-800 text-xs rounded-full px-3 py-1;
+}
 
-    /* hover状态 */
-    &:hover {
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-        transform: translateY(-3px);
+/* ======= 图表容器优化 ======= */
+.analysis-card {
+    @apply bg-white rounded-xl shadow-xl p-5;
+    transition: box-shadow 0.3s, transform 0.3s;
+}
+.analysis-card:hover {
+    @apply shadow-2xl;
+}
+
+/* ======= 系统状态加载动画 ======= */
+#loading {
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+}
+
+/* ======= 自适应布局优化 ======= */
+@media (max-width: 768px) {
+    .grid-cols-4 {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    .metric-card p {
+        @apply text-2xl;
+    }
+}
+@media (max-width: 500px) {
+    .grid-cols-4 {
+        grid-template-columns: repeat(1, minmax(0, 1fr));
     }
 }
