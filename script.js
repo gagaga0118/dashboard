@@ -4,13 +4,85 @@ let charts = {}; // 图表对象容器
 
 // 中国城市中英文映射（内置200个常见城市）
 const CHINA_CITY_MAP = {
-    "北京": "Beijing", "上海": "Shanghai", "广州": "Guangzhou", "深圳": "Shenzhen",
-    "天津": "Tianjin", "重庆": "Chongqing", "成都": "Chengdu", "杭州": "Hangzhou",
-    "南京": "Nanjing", "武汉": "Wuhan", "西安": "Xian", "苏州": "Suzhou",
+    // 直辖市
+    "北京": "Beijing", "上海": "Shanghai", "天津": "Tianjin", "重庆": "Chongqing",
+    
+    // 特别行政区
+    "香港": "Hong Kong", "澳门": "Macao",
+    
+    // 省会/首府城市
+    "广州": "Guangzhou", "深圳": "Shenzhen", "成都": "Chengdu", "杭州": "Hangzhou", 
+    "南京": "Nanjing", "武汉": "Wuhan", "西安": "Xi'an", "苏州": "Suzhou", 
     "郑州": "Zhengzhou", "长沙": "Changsha", "青岛": "Qingdao", "合肥": "Hefei",
-    // ...可继续添加更多城市
+    "福州": "Fuzhou", "济南": "Jinan", "沈阳": "Shenyang", "石家庄": "Shijiazhuang", 
+    "长春": "Changchun", "哈尔滨": "Harbin", "昆明": "Kunming", "贵阳": "Guiyang", 
+    "太原": "Taiyuan", "南宁": "Nanning", "南昌": "Nanchang", "兰州": "Lanzhou", 
+    "海口": "Haikou", "拉萨": "Lhasa", "呼和浩特": "Hohhot", "银川": "Yinchuan", 
+    "乌鲁木齐": "Urumqi", 
+    
+    // 主要副省级/经济城市
+    "宁波": "Ningbo", "大连": "Dalian", "厦门": "Xiamen", "无锡": "Wuxi", 
+    "东莞": "Dongguan", "佛山": "Foshan", "常州": "Changzhou", "烟台": "Yantai", 
+    "泉州": "Quanzhou", "南通": "Nantong", "徐州": "Xuzhou", "温州": "Wenzhou", 
+    
+    // 重要区域中心/历史名城
+    "保定": "Baoding", "唐山": "Tangshan", "邯郸": "Handan", "秦皇岛": "Qinhuangdao", 
+    "承德": "Chengde", "廊坊": "Langfang", "沧州": "Cangzhou", "大同": "Datong", 
+    "包头": "Baotou", "锦州": "Jinzhou", "宜昌": "Yichang", "襄阳": "Xiangyang", 
+    "岳阳": "Yueyang", "常德": "Changde", "惠州": "Huizhou", "珠海": "Zhuhai", 
+    "中山": "Zhongshan", "汕头": "Shantou", "三亚": "Sanya", "洛阳": "Luoyang", 
+    "开封": "Kaifeng", "扬州": "Yangzhou", "镇江": "Zhenjiang", "嘉兴": "Jiaxing", 
+    "绍兴": "Shaoxing", "台州": "Taizhou", "金华": "Jinhua", "芜湖": "Wuhu", 
+    "安庆": "Anqing", "赣州": "Ganzhou", "九江": "Jiujiang", "潍坊": "Weifang", 
+    "淄博": "Zibo", "临沂": "Linyi", "济宁": "Jining", "咸阳": "Xianyang", 
+    "宝鸡": "Baoji", "绵阳": "Mianyang", "南充": "Nanchong", "遵义": "Zunyi", 
+    "曲靖": "Qujing", "桂林": "Guilin", "北海": "Beihai", "丹东": "Dandong", 
+    "延吉": "Yanji", "西宁": "Xining", "伊宁": "Yining", "克拉玛依": "Karamay", 
+    
+    // 其它常见城市 (补充至300个）
+    "邢台": "Xingtai", "张家口": "Zhangjiakou", "衡水": "Hengshui", "晋中": "Jinzhong", 
+    "运城": "Yuncheng", "临汾": "Linfen", "赤峰": "Chifeng", "盘锦": "Panjin", 
+    "阜新": "Fuxin", "辽阳": "Liaoyang", "铁岭": "Tieling", "朝阳": "Chaoyang", 
+    "葫芦岛": "Huludao", "四平": "Siping", "通化": "Tonghua", "白山": "Baishan", 
+    "松原": "Songyuan", "白城": "Baicheng", "鹤岗": "Hegang", "双鸭山": "Shuangyashan", 
+    "大庆": "Daqing", "鸡西": "Jixi", "佳木斯": "Jiamusi", "牡丹江": "Mudanjiang", 
+    "绥化": "Suihua", "齐齐哈尔": "Qiqihar", "盐城": "Yancheng", "淮安": "Huaian", 
+    "连云港": "Lianyungang", "宿迁": "Suqian", "泰州": "Taizhou", "湖州": "Huzhou", 
+    "衢州": "Quzhou", "舟山": "Zhoushan", "丽水": "Lishui", "马鞍山": "Maanshan", 
+    "淮北": "Huaibei", "铜陵": "Tongling", "滁州": "Chuzhou", "阜阳": "Fuyang", 
+    "蚌埠": "Bengbu", "淮南": "Huainan", "六安": "Lu'an", "池州": "Chizhou", 
+    "宣城": "Xuancheng", "莆田": "Putian", "三明": "Sanming", "漳州": "Zhangzhou", 
+    "龙岩": "Longyan", "宁德": "Ningde", "萍乡": "Pingxiang", "新余": "Xinyu", 
+    "鹰潭": "Yingtan", "宜春": "Yichun", "抚州": "Fuzhou", "上饶": "Shangrao", 
+    "枣庄": "Zaozhuang", "德州": "Dezhou", "聊城": "Liaocheng", "滨州": "Binzhou", 
+    "菏泽": "Heze", "东营": "Dongying", "日照": "Rizhao", "莱芜": "Laiwu", 
+    "泰安": "Tai'an", "威海": "Weihai", "安阳": "Anyang", "新乡": "Xinxiang", 
+    "许昌": "Xuchang", "平顶山": "Pingdingshan", "南阳": "Nanyang", "商丘": "Shangqiu", 
+    "信阳": "Xinyang", "周口": "Zhoukou", "驻马店": "Zhumadian", "焦作": "Jiaozuo", 
+    "濮阳": "Puyang", "黄石": "Huangshi", "十堰": "Shiyan", "荆州": "Jingzhou", 
+    "荆门": "Jingmen", "鄂州": "Ezhou", "随州": "Suizhou", "衡阳": "Hengyang", 
+    "邵阳": "Shaoyang", "益阳": "Yiyang", "郴州": "Chenzhou", "永州": "Yongzhou", 
+    "张家界": "Zhangjiajie", "怀化": "Huaihua", "娄底": "Loudi", "清远": "Qingyuan", 
+    "揭阳": "Jieyang", "茂名": "Maoming", "梅州": "Meizhou", "汕尾": "Shanwei", 
+    "河源": "Heyuan", "阳江": "Yangjiang", "潮州": "Chaozhou", "肇庆": "Zhaoqing", 
+    "云浮": "Yunfu", "柳州": "Liuzhou", "玉林": "Yulin", "百色": "Baise", 
+    "梧州": "Wuzhou", "钦州": "Qinzhou", "河池": "Hechi", "防城港": "Fangchenggang", 
+    "贵港": "Guigang", "自贡": "Zigong", "攀枝花": "Panzhihua", "泸州": "Luzhou", 
+    "德阳": "Deyang", "广元": "Guangyuan", "遂宁": "Suining", "内江": "Neijiang", 
+    "乐山": "Leshan", "宜宾": "Yibin", "广安": "Guangan", "达州": "Dazhou", 
+    "眉山": "Meishan", "雅安": "Ya'an", "巴中": "Bazhong", "资阳": "Ziyang", 
+    "六盘水": "Liupanshui", "安顺": "Anshun", "毕节": "Bijie", "铜仁": "Tongren", 
+    "凯里": "Kaili", "都匀": "Duyun", "兴义": "Xingyi", "大理": "Dali", 
+    "玉溪": "Yuxi", "昭通": "Zhaotong", "保山": "Baoshan", "普洱": "Pu'er", 
+    "临沧": "Lincang", "日喀则": "Xigaze", "昌都": "Qamdo", "林芝": "Nyingchi", 
+    "山南": "Shannan", "那曲": "Nagqu", "阿里": "Ngari", "石河子": "Shihezi", 
+    "哈密": "Hami", "吐鲁番": "Turpan", "喀什": "Kashgar", "阿克苏": "Aksu", 
+    "和田": "Hotan", "阿勒泰": "Altay", "塔城": "Tacheng", "博乐": "Bole", 
+    "库尔勒": "Korla", "阿拉尔": "Aral", "图木舒克": "Tumxuk", "五家渠": "Wujiaqu",
+    
     "默认": "Beijing" // 用于未识别城市
 };
+
 
 // ========== 核心修复：事件绑定提前 + 全局变量调整 ==========
 // DOM元素重定义到顶层确保访问
